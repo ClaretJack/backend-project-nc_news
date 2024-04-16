@@ -11,7 +11,7 @@ afterAll(() => {
   return db.end();
 });
 
-describe("api/topics", () => {
+describe("/api/topics", () => {
   test("GET:200 Should send an array of topics to the client", () => {
     return request(app)
       .get("/api/topics")
@@ -24,6 +24,17 @@ describe("api/topics", () => {
           expect(typeof topic.description).toBe("string");
           expect(typeof topic.slug).toBe("string");
         });
+      });
+  });
+});
+
+describe("/api", () => {
+  test("GET:200 Should return object containing all available endpoints", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ text }) => {
+        expect(typeof JSON.parse(text)).toEqual("object");
       });
   });
 });
