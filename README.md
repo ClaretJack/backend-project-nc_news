@@ -1,4 +1,10 @@
 # Northcoders News API
 
-1- The files to access the databases have not been added to the repo. The files needed are the .env.development, .env.test and setup.sql.
-2- If access to the databses are needed please leave me a message and I will send the data directly to you.
+## Project Description
+The NC News is a back-end API project designed to be similar to reddit. This project has been built using Javascript, Node.js, Express, PorstgresSQL. It has been built up using TDD method with Jest.
+
+### Installation
+-- for access to the database please as for the PGDATABASE=*****
+npm install
+npm setup-dbs
+npm run seed
