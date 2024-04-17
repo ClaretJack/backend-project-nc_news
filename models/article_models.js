@@ -1,3 +1,4 @@
+const { updateArticle } = require("../controllers/article_controller");
 const db = require("../db/connection");
 
 selectArticleById = (article_id) => {
@@ -56,9 +57,22 @@ selectArticleComments = (article_id) => {
     });
 };
 
+updateArticleById = (article_id, update) => {
+  const { inc_votes } = update;
+  return db
+    .query(
+      `UPDATE articles SET votes = votes + $2 WHERE article_id = $1 RETURNING *;`,
+      [article_id, inc_votes]
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};
+
 module.exports = {
   selectArticleById,
   selectAllArticles,
   selectArticleComments,
   checkArticleExists,
+  updateArticleById,
 };

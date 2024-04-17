@@ -5,6 +5,7 @@ const {
   getArticleById,
   getAllArticles,
   getArticleComments,
+  updateArticle,
 } = require("./controllers/article_controller");
 const { postComment } = require("./controllers/comment_controller");
 
@@ -22,6 +23,8 @@ app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id/comments", getArticleComments);
 
 app.post("/api/articles/:article_id/comments", postComment);
+
+app.patch("/api/articles/:article_id", updateArticle);
 
 ////////////////////////////////// error handling below
 
