@@ -160,4 +160,57 @@ describe("/api/articles/:article_Id/comments", () => {
         expect(response.body.msg).toBe("Bad request");
       });
   });
+  test("POST:201 Should insert new comment ", () => {
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send({
+        username: "lurker",
+        body: "Testing testing all day long",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(typeof body.comment.comment_id).toBe("number");
+        expect(typeof body.comment.article_id).toBe("number");
+        expect(typeof body.comment.body).toBe("string");
+        expect(typeof body.comment.author).toBe("string");
+        expect(typeof body.comment.votes).toBe("number");
+        expect(typeof body.comment.created_at).toBe("string");
+      });
+  });
+  test("POST:404 Should return the correct error if given article id that is valid but doesnt exist ", () => {
+    return request(app)
+      .post("/api/articles/1000/comments")
+      .send({
+        username: "lurker",
+        body: "Testing testing all day long",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found");
+      });
+  });
+  test("POST:400 Should return the correct error if given article id that is invalid ", () => {
+    return request(app)
+      .post("/api/articles/badId/comments")
+      .send({
+        username: "lurker",
+        body: "Testing testing all day long",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("POST:400 Should return the correct error if posted information is insufficient", () => {
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send({
+        username: "lurker",
+        wrongKey: "Testing testing all day long",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
 });
