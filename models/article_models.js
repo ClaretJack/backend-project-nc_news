@@ -23,5 +23,29 @@ selectAllArticles = () => {
       return rows;
     });
 };
+checkArticleExists = (article_id) => {
+  return db
+    .query("SELECT * FROM articles WHERE articles.article_id=$1", [article_id])
+    .then(({ rows: article }) => {
+      if (article.length === 0) {
+        return Promise.reject({ status: 404, msg: "article does not exist" });
+      }
+    });
+};
+selectArticleComments = (article_id) => {
+  return db
+    .query(
+      "SELECT comment_id, votes, created_at, author, body, article_id FROM comments WHERE comments.article_id =$1 ORDER BY created_at DESC",
+      [article_id]
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};
 
-module.exports = { selectArticleById, selectAllArticles };
+module.exports = {
+  selectArticleById,
+  selectAllArticles,
+  selectArticleComments,
+  checkArticleExists,
+};
