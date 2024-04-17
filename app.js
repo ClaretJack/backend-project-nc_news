@@ -4,11 +4,12 @@ const { getAllEndpoints } = require("./controllers/api_controller");
 const {
   getArticleById,
   getAllArticles,
+  getArticleComments,
 } = require("./controllers/article_controller");
 
 const app = express();
 app.use(express.json());
-
+1;
 app.get("/api/topics", getTopics);
 
 app.get("/api", getAllEndpoints);
@@ -16,6 +17,8 @@ app.get("/api", getAllEndpoints);
 app.get("/api/articles/:article_id", getArticleById);
 
 app.get("/api/articles", getAllArticles);
+
+app.get("/api/articles/:article_id/comments", getArticleComments);
 
 app.use((err, req, res, next) => {
   if (err.status && err.msg) {
