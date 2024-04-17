@@ -45,13 +45,12 @@ describe("/api/articles/:article_id", () => {
       .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
-        const createdDate = body.article.created_at;
         expect(body.article.author).toBe("butter_bridge");
         expect(body.article.title).toBe("Living in the shadow of a great man");
         expect(body.article.article_id).toBe(1);
         expect(body.article.body).toBe("I find this existence challenging");
         expect(body.article.topic).toBe("mitch");
-        expect(body.article.created_at).toBe(createdDate);
+        expect(typeof body.article.created_at).toBe("string");
         expect(body.article.votes).toBe(100);
         expect(body.article.article_img_url).toBe(
           "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
@@ -74,6 +73,51 @@ describe("/api/articles/:article_id", () => {
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("Bad request");
+      });
+  });
+  test("PATCH:200 updates the article votes correctly", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: 10 })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.article_id).toBe(1);
+        expect(body.article.title).toBe("Living in the shadow of a great man");
+        expect(body.article.topic).toBe("mitch");
+        expect(body.article.author).toBe("butter_bridge");
+        expect(body.article.body).toBe("I find this existence challenging");
+        expect(typeof body.article.created_at).toBe("string");
+        expect(body.article.votes).toBe(110);
+        expect(body.article.article_img_url).toBe(
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        );
+      });
+  });
+  test("PATCH:400 Will return the correct error when given an invalid id", () => {
+    return request(app)
+      .patch("/api/articles/halfwayThere")
+      .send({ inc_votes: 10 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("PATCH:404 Will return the correct error when given an valid id that doesnt exist", () => {
+    return request(app)
+      .patch("/api/articles/1000")
+      .send({ inc_votes: 10 })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
+  });
+  test("PATCH:400 Given wrong information responds with correct error", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: "Wait this isnt a number" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
       });
   });
 });

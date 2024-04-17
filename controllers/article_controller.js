@@ -3,6 +3,7 @@ const {
   selectAllArticles,
   selectArticleComments,
   checkArticleExists,
+  updateArticleById,
 } = require("../models/article_models");
 
 exports.getArticleById = (req, res, next) => {
@@ -30,6 +31,22 @@ exports.getArticleComments = (req, res, next) => {
   ])
     .then(([comments]) => {
       res.status(200).send({ comments });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.updateArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  const update = req.body;
+
+  Promise.all([
+    updateArticleById(article_id, update),
+    checkArticleExists(article_id),
+  ])
+    .then(([[article]]) => {
+      res.status(200).send({ article });
     })
     .catch((err) => {
       next(err);
