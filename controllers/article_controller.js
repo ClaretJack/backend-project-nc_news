@@ -5,6 +5,7 @@ const {
   checkArticleExists,
   updateArticleById,
 } = require("../models/article_models");
+const { checkTopicExists } = require("../models/topics_models");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
@@ -18,9 +19,14 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-  selectAllArticles().then((article) => {
-    res.status(200).send(article);
-  });
+  const { topic } = req.query;
+  selectAllArticles(topic)
+    .then((article) => {
+      res.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
 
 exports.getArticleComments = (req, res, next) => {
