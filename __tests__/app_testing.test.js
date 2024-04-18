@@ -128,8 +128,8 @@ describe("/api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        expect(body.length).toBe(13);
-        body.forEach((article) => {
+        expect(body.article.length).toBe(13);
+        body.article.forEach((article) => {
           expect(typeof article.author).toBe("string");
           expect(typeof article.title).toBe("string");
           expect(typeof article.article_id).toBe("number");
@@ -146,9 +146,9 @@ describe("/api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        expect(body.length).toBe(13);
-        expect(body).toBeSortedBy("created_at", { descending: true });
-        body.forEach((article) => {
+        expect(body.article.length).toBe(13);
+        expect(body.article).toBeSortedBy("created_at", { descending: true });
+        body.article.forEach((article) => {
           expect(typeof article.author).toBe("string");
           expect(typeof article.title).toBe("string");
           expect(typeof article.article_id).toBe("number");
@@ -158,6 +158,59 @@ describe("/api/articles", () => {
           expect(typeof article.comment_count).toBe("number");
           expect(Object.keys(article).length).toBe(8);
         });
+      });
+  });
+
+  test("GET:200 Should accept a topic query and returns articles of that topic only", () => {
+    return request(app)
+      .get("/api/articles")
+      .query({ topic: "cats" })
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.article;
+        expect(Object.keys(articles).length).toBe(1);
+        expect(articles).toBeSortedBy("created_at");
+        articles.forEach((article) => {
+          expect(Object.keys(article).length).toBe(8);
+          expect(typeof article.title).toBe("string");
+          expect(article.topic).toBe("cats");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.body).toBe("undefined");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.comment_count).toBe("number");
+        });
+      });
+  });
+  test("GET:200 returns the articles and ingores query when receiving an invalid query", () => {
+    return request(app)
+      .get("/api/articles")
+      .query({ badQuery: "cats" })
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.length).toBe(13);
+        expect(body.article).toBeSortedBy("created_at", { descending: true });
+        body.article.forEach((article) => {
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.comment_count).toBe("number");
+          expect(Object.keys(article).length).toBe(8);
+        });
+      });
+  });
+
+  test("GET:404 Returns the correct error when topic does not exist", () => {
+    return request(app)
+      .get("/api/articles")
+      .query({ topic: "fakeTopic" })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Topic does not exist");
       });
   });
 });

@@ -1,5 +1,5 @@
-const { updateArticle } = require("../controllers/article_controller");
 const db = require("../db/connection");
+const { selectAllTopics } = require("./topics_models");
 
 selectArticleById = (article_id) => {
   return db
@@ -15,10 +15,9 @@ selectArticleById = (article_id) => {
     });
 };
 
-selectAllArticles = () => {
-  return db
-    .query(
-      `SELECT articles.author, 
+selectAllArticles = (topic) => {
+  let sqlString = `
+  SELECT articles.author, 
       articles.title, 
       articles.article_id, 
       articles.topic, 
@@ -30,12 +29,22 @@ selectAllArticles = () => {
       FROM articles 
       LEFT JOIN comments 
       ON comments.article_id = articles.article_id 
-      GROUP BY articles.article_id 
-      ORDER BY created_at DESC;`
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+      `;
+
+  const topicArray = [];
+  if (topic) {
+    sqlString += ` WHERE topic =$1`;
+    topicArray.push(topic);
+  }
+
+  sqlString += ` GROUP BY articles.article_id 
+  ORDER BY created_at DESC`;
+  return db.query(sqlString, topicArray).then(({ rows }) => {
+    if (rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "Topic does not exist" });
+    }
+    return rows;
+  });
 };
 checkArticleExists = (article_id) => {
   return db
@@ -46,6 +55,7 @@ checkArticleExists = (article_id) => {
       }
     });
 };
+
 selectArticleComments = (article_id) => {
   return db
     .query(
