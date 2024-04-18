@@ -93,5 +93,10 @@
       "votes": 10,
       "article_img_url": "http:www.this_url/article_img.com"
     }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes the comment that matches comment id ",
+    "queries": [],
+    "exampleResponse": {}
   }
 }

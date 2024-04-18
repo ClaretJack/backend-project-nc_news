@@ -7,7 +7,10 @@ const {
   getArticleComments,
   updateArticle,
 } = require("./controllers/article_controller");
-const { postComment } = require("./controllers/comment_controller");
+const {
+  postComment,
+  deleteCommentById,
+} = require("./controllers/comment_controller");
 
 const app = express();
 app.use(express.json());
@@ -25,6 +28,8 @@ app.get("/api/articles/:article_id/comments", getArticleComments);
 app.post("/api/articles/:article_id/comments", postComment);
 
 app.patch("/api/articles/:article_id", updateArticle);
+
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 ////////////////////////////////// error handling below
 
