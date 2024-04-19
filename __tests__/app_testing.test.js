@@ -3,6 +3,7 @@ const seed = require("../db/seeds/seed");
 const app = require("../app");
 const request = require("supertest");
 const db = require("../db/connection");
+const endpoints = require("../endpoints.json");
 
 beforeEach(() => {
   return seed(data);
@@ -33,8 +34,8 @@ describe("/api", () => {
     return request(app)
       .get("/api")
       .expect(200)
-      .then(({ text }) => {
-        expect(typeof JSON.parse(text)).toEqual("object");
+      .then((response) => {
+        expect(JSON.parse(response.text)).toEqual({ endpoints });
       });
   });
 });

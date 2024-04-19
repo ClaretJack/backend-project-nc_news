@@ -1,8 +1,5 @@
-const requestFile = require("../endpoints.json");
-const fs = require("node:fs");
+const endpoints = require("../endpoints.json");
 
 exports.getAllEndpoints = (req, res, next) => {
-  fs.readFile("endpoints.json", "utf-8", (err, data) => {
-    return res.status(200).send(data);
-  });
+  res.status(200).send({ endpoints });
 };
