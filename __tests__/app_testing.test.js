@@ -40,7 +40,7 @@ describe("/api", () => {
 });
 
 describe("/api/articles/:article_id", () => {
-  test("GET 200: Returns the correct article by its ID", () => {
+  test("GET 200: Returns the correct article by its ID,", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
@@ -55,6 +55,26 @@ describe("/api/articles/:article_id", () => {
         expect(body.article.article_img_url).toBe(
           "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
         );
+        expect(body.article.comment_count).toBe(11);
+      });
+  });
+
+  test("GET 200: Returns the correct article by its ID, But now includes comment_count", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.author).toBe("butter_bridge");
+        expect(body.article.title).toBe("Living in the shadow of a great man");
+        expect(body.article.article_id).toBe(1);
+        expect(body.article.body).toBe("I find this existence challenging");
+        expect(body.article.topic).toBe("mitch");
+        expect(typeof body.article.created_at).toBe("string");
+        expect(body.article.votes).toBe(100);
+        expect(body.article.article_img_url).toBe(
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        );
+        expect(body.article.comment_count).toBe(11);
       });
   });
 
