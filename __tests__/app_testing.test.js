@@ -250,7 +250,7 @@ describe("/api/articles/:article_Id/comments", () => {
           expect(typeof comment.created_at).toBe("string");
           expect(typeof comment.author).toBe("string");
           expect(typeof comment.body).toBe("string");
-          expect(typeof comment.article_id).toBe("number");
+          expect(comment.article_id).toBe(3);
         });
       });
   });
@@ -288,7 +288,7 @@ describe("/api/articles/:article_Id/comments", () => {
       .expect(201)
       .then(({ body }) => {
         expect(typeof body.comment.comment_id).toBe("number");
-        expect(typeof body.comment.article_id).toBe("number");
+        expect(body.comment.article_id).toBe(2);
         expect(typeof body.comment.body).toBe("string");
         expect(typeof body.comment.author).toBe("string");
         expect(typeof body.comment.votes).toBe("number");
@@ -363,7 +363,7 @@ describe("/api/users", () => {
       .get("/api/users")
       .expect(200)
       .then((response) => {
-        const users = response.body;
+        const users = response.body.user;
         expect(users.length).toEqual(4);
         users.forEach((user) => {
           expect(Object.keys(user).length).toBe(3);
