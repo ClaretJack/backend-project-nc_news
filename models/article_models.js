@@ -2,11 +2,27 @@ const db = require("../db/connection");
 const { selectAllTopics } = require("./topics_models");
 
 selectArticleById = (article_id) => {
+  const SqlString = `
+  SELECT 
+  articles.author, 
+  articles.title, 
+  articles.article_id, 
+  articles.body, 
+  articles.topic, 
+  articles.created_at, 
+  articles.votes, 
+  article_img_url, 
+  CAST(COUNT(comment_id) AS INT) 
+  AS comment_count 
+  FROM articles 
+  LEFT JOIN comments 
+  ON comments.article_id=articles.article_id`;
+
+  const whereQuery = ` WHERE articles.article_id=$1`;
+  const groupAndOrder = ` GROUP BY articles.article_id ORDER BY articles.created_at DESC;`;
+
   return db
-    .query(
-      "SELECT author, title, article_id, body, topic, created_at, votes, article_img_url FROM articles WHERE article_id=$1;",
-      [article_id]
-    )
+    .query(SqlString + whereQuery + groupAndOrder, [article_id])
     .then(({ rows }) => {
       if (rows.length === 0) {
         return Promise.reject({ status: 404, msg: "article does not exist" });
