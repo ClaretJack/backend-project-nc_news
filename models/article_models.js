@@ -32,6 +32,7 @@ selectArticleById = (article_id) => {
 };
 
 selectAllArticles = (topic, order = "desc", sort_by = "created_at") => {
+  console.log("this is the backend", sort_by);
   let sqlString = `
   SELECT articles.author, 
       articles.title, 
@@ -61,7 +62,7 @@ selectAllArticles = (topic, order = "desc", sort_by = "created_at") => {
   const validOrder = ["ASC", "DESC"];
 
   if (!validSortBy.includes(sort_by) || !validOrder.includes(orderToUpper)) {
-    return Promise.reject({ status: 200, msg: "Invalid query inputted" });
+    return Promise.reject({ status: 400, msg: "Invalid query inputted" });
   }
 
   const queryArray = [];
@@ -76,6 +77,7 @@ selectAllArticles = (topic, order = "desc", sort_by = "created_at") => {
     if (rows.length === 0) {
       return Promise.reject({ status: 404, msg: "Topic does not exist" });
     }
+
     return rows;
   });
 };
