@@ -204,6 +204,80 @@ describe("/api/articles", () => {
         });
       });
   });
+
+  test("GET:200 Should accept a sort by Query and return correctly", () => {
+    return request(app)
+      .get("/api/articles")
+      .query({ sort_by: "title" })
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.article;
+        expect(Object.keys(articles).length).toBe(13);
+        expect(articles).toBeSortedBy("title", { descending: true });
+        articles.forEach((article) => {
+          expect(Object.keys(article).length).toBe(8);
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.body).toBe("undefined");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.comment_count).toBe("number");
+        });
+      });
+  });
+
+  test("GET:200 Should accept a sort by and order Query and return correctly", () => {
+    return request(app)
+      .get("/api/articles")
+      .query({
+        sort_by: "title",
+        order: "ASC",
+      })
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.article;
+        expect(Object.keys(articles).length).toBe(13);
+        expect(articles).toBeSortedBy("title", { ascending: true });
+        articles.forEach((article) => {
+          expect(Object.keys(article).length).toBe(8);
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.body).toBe("undefined");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.comment_count).toBe("number");
+        });
+      });
+  });
+
+  test("GET:200 Should accept a topic, sort by and order Query and return correctly", () => {
+    return request(app)
+      .get("/api/articles")
+      .query({
+        topic: "mitch",
+        sort_by: "title",
+        order: "ASC",
+      })
+      .expect(200)
+      .then((response) => {
+        const articles = response.body.article;
+        expect(Object.keys(articles).length).toBe(12);
+        expect(articles).toBeSortedBy("title", { ascending: true });
+        articles.forEach((article) => {
+          expect(Object.keys(article).length).toBe(8);
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.body).toBe("undefined");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.comment_count).toBe("number");
+        });
+      });
+  });
+
   test("GET:200 returns the articles and ingores query when receiving an invalid query", () => {
     return request(app)
       .get("/api/articles")
