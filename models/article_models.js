@@ -31,7 +31,7 @@ selectArticleById = (article_id) => {
     });
 };
 
-selectAllArticles = (topic) => {
+selectAllArticles = (topic, order = "desc", sort_by = "created_at") => {
   let sqlString = `
   SELECT articles.author, 
       articles.title, 
@@ -47,15 +47,32 @@ selectAllArticles = (topic) => {
       ON comments.article_id = articles.article_id 
       `;
 
-  const topicArray = [];
+  const validSortBy = [
+    "title",
+    "author",
+    "article_id",
+    "votes",
+    "comment_count",
+    "topic",
+    "created_at",
+  ];
+
+  const orderToUpper = order.toUpperCase();
+  const validOrder = ["ASC", "DESC"];
+
+  if (!validSortBy.includes(sort_by) || !validOrder.includes(orderToUpper)) {
+    return Promise.reject({ status: 200, msg: "Invalid query inputted" });
+  }
+
+  const queryArray = [];
   if (topic) {
     sqlString += ` WHERE topic =$1`;
-    topicArray.push(topic);
+    queryArray.push(topic);
   }
 
   sqlString += ` GROUP BY articles.article_id 
-  ORDER BY created_at DESC`;
-  return db.query(sqlString, topicArray).then(({ rows }) => {
+  ORDER BY ${sort_by} ${order}`;
+  return db.query(sqlString, queryArray).then(({ rows }) => {
     if (rows.length === 0) {
       return Promise.reject({ status: 404, msg: "Topic does not exist" });
     }
