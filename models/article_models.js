@@ -32,7 +32,6 @@ selectArticleById = (article_id) => {
 };
 
 selectAllArticles = (topic, order = "desc", sort_by = "created_at") => {
-  console.log("this is the backend", sort_by);
   let sqlString = `
   SELECT articles.author, 
       articles.title, 

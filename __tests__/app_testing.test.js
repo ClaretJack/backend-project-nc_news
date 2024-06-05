@@ -448,3 +448,19 @@ describe("/api/users", () => {
       });
   });
 });
+
+describe("/api/users/:username", () => {
+  test("GET 200: Returns the correct user by its ID,", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body);
+        expect(body.user.username).toBe("butter_bridge");
+        expect(body.user.name).toBe("jonny");
+        expect(body.user.avatar_url).toBe(
+          "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        );
+      });
+  });
+});
